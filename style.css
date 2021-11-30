@@ -1,0 +1,40 @@
+@import "node_modules/ol/ol.css";
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: sans-serif;
+}
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  float: right;
+}
+
+#infos {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+}
+
+.text {
+  height: 80%;
+  font-size: 20pt;
+  padding: 50px;
+  line-height: 2;
+}
+
+
+#extent {
+  display: none;
+  position: fixed;
+  top: 30px;
+  right: 200px;
+  z-index: 1000;
+  background-color: blueviolet;
+}
