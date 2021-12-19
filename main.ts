@@ -173,7 +173,13 @@ reiherstieg.fit([4316851.192003815, 3376881.628141567, 4324285.537971712, 338032
 let hamburg = new View({
   projection: 'EPSG:3035'
 });
-hamburg.fit([4303100, 3365200, 4342700, 3403600], { size: map.getSize() })
+hamburg.fit([4303100, 3365200, 4342700, 3403600], { size: map.getSize() });
+
+
+let finkenwerder = new View({
+  projection: 'EPSG:3035'
+});
+finkenwerder.fit([4309457,3378692,4314588,3382523], { size: map.getSize() });
 
 $('#text0').data('view', new View({
   projection: 'EPSG:3035',
@@ -182,20 +188,23 @@ $('#text0').data('view', new View({
 }))
 $('#text0').data('layer', [osm, bahn])
 
-$('#text1').data('view', hamburg);
-$('#text1').data('layer', [osm, erreichbarkeit])
+$('#text1').data('view', hamburg)
+$('#text1').data('layer', [osm, bahn])
 
-$('#text2').data('view', bergedorf);
+$('#text2').data('view', hamburg);
 $('#text2').data('layer', [osm, erreichbarkeit])
 
 $('#text3').data('view', bergedorf);
-$('#text3').data('layer', [osm, einwohnerminuten])
+$('#text3').data('layer', [osm, erreichbarkeit])
 
-$('#text4').data('view', reiherstieg);
+$('#text4').data('view', bergedorf);
 $('#text4').data('layer', [osm, einwohnerminuten])
 
-$('#text5').data('view', hamburg);
-$('#text5').data('layer', [osm, einwohnerminuten, bahn])
+$('#text5').data('view', reiherstieg);
+$('#text5').data('layer', [osm, einwohnerminuten])
+
+$('#text6').data('view', finkenwerder);
+$('#text6').data('layer', [osm, einwohnerminuten, bahn])
 
 function animate(from: View, to: View, percentage: number) {
   //console.log(percentage)
