@@ -60,6 +60,46 @@ let einwohnerminuten = new TileLayer({
     })
 })
 
+let einwohnerminuten2035 = new TileLayer({
+  style: {
+    color: ['interpolate', ['linear'], ['band', 1], 1, [0, 0, 0], 0.15, [0, 150, 0], 0.0001, [0, 255, 0], 0, [0, 0, 0, 0]],
+  },
+  source:
+    new GeoTIFF({
+      //convertToRGB: false,
+      sources: [{
+        url: './img/einwohnerminuten2035.tif',
+        overviews: [`./img/einwohnerminuten2035.tif.ovr`],
+
+        //min: 0,
+        max: 60,
+        nodata: -999,
+      }]
+
+
+    })
+})
+
+let einwohnerMinDiff = new TileLayer({
+  style: {
+    color: ['interpolate', ['linear'], ['band', 1], 1, [0, 0, 0], 0.75, [0, 150, 0], 0.51, [0, 255, 0], 0.50999, [0, 0, 0, 0], 0.5, [0, 0, 0, 0], 0.49001, [0, 0, 0, 0], 0.49, [255, 0, 0], 0.35, [0, 0, 0], 0, [0, 0, 0]],
+  },
+  source:
+    new GeoTIFF({
+      //convertToRGB: false,
+      sources: [{
+        url: './img/ew_diff.tif',
+        overviews: [`./img/ew_diff.tif.ovr`],
+
+        min: -2100,
+        max: 2100,
+        nodata: 0,
+      }]
+
+
+    })
+})
+
 let osm = new TileLayerNormal({
   source: new OSM(),
   opacity: 0.7
@@ -94,6 +134,21 @@ let bahn = new VectorLayer({
       })
     })
   },
+});
+
+
+
+let neubau = new VectorLayer({
+  source: new VectorSource({
+    url: './img/neubau.geojson',
+    format: new GeoJSON(),
+  }),
+  style: new Style({
+    stroke: new Stroke({
+      color: '#ff0000',
+      width: 2,
+    })
+  })
 });
 
 
@@ -147,7 +202,7 @@ $(document).on('scroll', (e) => {
       animate(karten[last].view, value.view, part)
       if (part > 0.5)
         map.setLayers(value.layer)
-      else 
+      else
         map.setLayers(karten[last].layer)
       break;
     }
@@ -179,7 +234,12 @@ hamburg.fit([4303100, 3365200, 4342700, 3403600], { size: map.getSize() });
 let finkenwerder = new View({
   projection: 'EPSG:3035'
 });
-finkenwerder.fit([4309457,3378692,4314588,3382523], { size: map.getSize() });
+finkenwerder.fit([4309457, 3378692, 4314588, 3382523], { size: map.getSize() });
+
+let s4 = new View({
+  projection: 'EPSG:3035'
+});
+s4.fit([4324476.8688, 3382098.0807, 4334487.6251, 3389781.3361], { size: map.getSize() });
 
 $('#text0').data('view', new View({
   projection: 'EPSG:3035',
@@ -204,7 +264,22 @@ $('#text5').data('view', reiherstieg);
 $('#text5').data('layer', [osm, einwohnerminuten])
 
 $('#text6').data('view', finkenwerder);
-$('#text6').data('layer', [osm, einwohnerminuten, bahn])
+$('#text6').data('layer', [osm, einwohnerminuten])
+
+$('#text7').data('view', hamburg);
+$('#text7').data('layer', [osm, einwohnerminuten])
+
+$('#text8').data('view', hamburg);
+$('#text8').data('layer', [osm, einwohnerminuten2035])
+
+$('#text9').data('view', hamburg);
+$('#text9').data('layer', [osm, einwohnerminuten2035, neubau])
+
+$('#text10').data('view', s4);
+$('#text10').data('layer', [osm, einwohnerMinDiff])
+
+$('#text11').data('view', s4);
+$('#text11').data('layer', [osm, einwohnerMinDiff])
 
 function animate(from: View, to: View, percentage: number) {
   //console.log(percentage)
