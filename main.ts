@@ -14,11 +14,11 @@ import VectorLayer from 'ol/layer/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
+import RenderEvent from 'ol/render/Event';
 
 
 proj4.defs("EPSG:3035", "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 register(proj4);
-
 
 let erreichbarkeit = new TileLayer({
   style: {
@@ -80,9 +80,9 @@ let einwohnerminuten2035 = new TileLayer({
     })
 })
 
-let einwohnerMinDiff = new TileLayer({
+let erreichbarkeitDiff = new TileLayer({
   style: {
-    color: ['interpolate', ['linear'], ['band', 1], 1, [0, 0, 0], 0.75, [0, 150, 0], 0.51, [0, 255, 0], 0.50999, [0, 0, 0, 0], 0.5, [0, 0, 0, 0], 0.49001, [0, 0, 0, 0], 0.49, [255, 0, 0], 0.35, [0, 0, 0], 0, [0, 0, 0]],
+    color: ['interpolate', ['linear'], ['band', 1], 1, [0, 0, 0], 0.65, [0, 150, 0], 0.51, [0, 255, 0], 0.50999, [0, 0, 0, 0], 0.5, [0, 0, 0, 0], 0.49001, [0, 0, 0, 0], 0.49, [255, 0, 0], 0.35, [0, 0, 0], 0, [0, 0, 0]],
   },
   source:
     new GeoTIFF({
@@ -91,8 +91,28 @@ let einwohnerMinDiff = new TileLayer({
         url: './img/ew_diff.tif',
         overviews: [`./img/ew_diff.tif.ovr`],
 
-        min: -2100,
-        max: 2100,
+        min: -2900,
+        max: 2900,
+        nodata: 0,
+      }]
+
+
+    })
+})
+
+let einwohnerMinDiff = new TileLayer({
+  style: {
+    color: ['interpolate', ['linear'], ['band', 1], 0, [0, 255, 0], 0.75, [0, 0, 0, 0], 1, [255, 0, 0]],
+  },
+  source:
+    new GeoTIFF({
+      //convertToRGB: false,
+      sources: [{
+        url: './img/ewm_diff.tif',
+        overviews: [`./img/ewm_diff.tif.ovr`],
+
+        min: -15,
+        max: 5,
         nodata: 0,
       }]
 
@@ -104,6 +124,34 @@ let osm = new TileLayerNormal({
   source: new OSM(),
   opacity: 0.7
 });
+
+// https://medium.com/@xavierpenya/openlayers-3-osm-map-in-grayscale-5ced3a3ed942
+// function applies greyscale to every pixel in canvas
+
+function greyscale(context: CanvasRenderingContext2D) {
+  var canvas = context.canvas;
+  var width = canvas.width;
+  var height = canvas.height;
+  var imageData = context.getImageData(0, 0, width, height);
+  var data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    var r = data[i];
+    var g = data[i + 1];
+    var b = data[i + 2];
+    // CIE luminance for the RGB
+    var v = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    // Show white color instead of black color while loading new tiles:
+    if (v === 0.0)
+      v = 255.0;
+    data[i + 0] = v; // Red
+    data[i + 1] = v; // Green
+    data[i + 2] = v; // Blue
+    data[i + 3] = 255; // Alpha
+  }
+  context.putImageData(imageData, 0, 0);
+}
+
+osm.on('postrender', (event: RenderEvent) => { greyscale(event.context) })
 
 
 let bahn = new VectorLayer({
@@ -275,7 +323,7 @@ $('#text8').data('layer', [osm, einwohnerminuten2035])
 $('#text9').data('view', hamburg);
 $('#text9').data('layer', [osm, einwohnerminuten2035, neubau])
 
-$('#text10').data('view', s4);
+$('#text10').data('view', hamburg);
 $('#text10').data('layer', [osm, einwohnerMinDiff])
 
 $('#text11').data('view', s4);
