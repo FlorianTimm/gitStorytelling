@@ -193,8 +193,8 @@ let neubau = new VectorLayer({
   }),
   style: new Style({
     stroke: new Stroke({
-      color: '#ff0000',
-      width: 2,
+      color: '#000000',
+      width: 1,
     })
   })
 });
@@ -256,11 +256,7 @@ $(document).on('scroll', (e) => {
     }
     last = key;
   }
-
-
-
 })
-
 
 
 let bergedorf = new View({
@@ -324,10 +320,13 @@ $('#text9').data('view', hamburg);
 $('#text9').data('layer', [osm, einwohnerminuten2035, neubau])
 
 $('#text10').data('view', hamburg);
-$('#text10').data('layer', [osm, einwohnerMinDiff])
+$('#text10').data('layer', [osm, einwohnerMinDiff, neubau])
 
 $('#text11').data('view', s4);
 $('#text11').data('layer', [osm, einwohnerMinDiff])
+
+$('#text12').data('view', finkenwerder);
+$('#text12').data('layer', [osm, einwohnerMinDiff])
 
 function animate(from: View, to: View, percentage: number) {
   //console.log(percentage)
