@@ -15,6 +15,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import RenderEvent from 'ol/render/Event';
+import { Attribution } from 'ol/control';
 
 
 proj4.defs("EPSG:3035", "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
@@ -184,7 +185,31 @@ let bahn = new VectorLayer({
   },
 });
 
+let bahn_grau = new VectorLayer({
+  source: new VectorSource({
+    url: './img/bahn.geojson',
+    format: new GeoJSON(),
+  }),
+  style: new Style({
+    stroke: new Stroke({
+      color: '#222222',
+      width: 3,
+    })
+  })
+});
 
+let bahn_neu = new VectorLayer({
+  source: new VectorSource({
+    url: './img/neue_bahn.geojson',
+    format: new GeoJSON(),
+  }),
+  style: new Style({
+    stroke: new Stroke({
+      color: '#ff2222',
+      width: 4,
+    })
+  })
+});
 
 let neubau = new VectorLayer({
   source: new VectorSource({
@@ -211,7 +236,9 @@ const map = new Map({
     center: transform([10.0, 53.54], 'EPSG:4326', 'EPSG:3035'),
     zoom: 11
   }),
-  controls: [],
+  controls: [new Attribution({
+    collapsible: false,
+  })],
   interactions: []
 });
 
@@ -280,6 +307,12 @@ let finkenwerder = new View({
 });
 finkenwerder.fit([4309457, 3378692, 4314588, 3382523], { size: map.getSize() });
 
+
+let bergedorf_sued = new View({
+  projection: 'EPSG:3035'
+});
+bergedorf_sued.fit([4333300, 3373300, 4337100, 3376300], { size: map.getSize() });
+
 let s4 = new View({
   projection: 'EPSG:3035'
 });
@@ -293,7 +326,7 @@ $('#text0').data('view', new View({
 $('#text0').data('layer', [osm, bahn])
 
 $('#text1').data('view', hamburg)
-$('#text1').data('layer', [osm, bahn])
+$('#text1').data('layer', [osm, bahn_grau, bahn_neu])
 
 $('#text2').data('view', hamburg);
 $('#text2').data('layer', [osm, erreichbarkeit])
@@ -325,8 +358,11 @@ $('#text10').data('layer', [osm, einwohnerMinDiff, neubau])
 $('#text11').data('view', s4);
 $('#text11').data('layer', [osm, einwohnerMinDiff])
 
-$('#text12').data('view', finkenwerder);
+$('#text12').data('view', bergedorf_sued);
 $('#text12').data('layer', [osm, einwohnerMinDiff])
+
+$('#text13').data('view', hamburg);
+$('#text13').data('layer', [osm, einwohnerMinDiff])
 
 function animate(from: View, to: View, percentage: number) {
   //console.log(percentage)
